@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  ml:
+    image: ${DOCKER_HUB_USERNAME}/smart-bin-rvm-ml:latest
+    restart: always
+    ports:
+      - 8876:5000
