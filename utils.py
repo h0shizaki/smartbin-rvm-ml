@@ -1,21 +1,27 @@
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
+import keras.utils as ku
 import numpy as np
 from PIL import Image
 
 model = load_model('models/model.h5')
-output_class = ["cardboard", "glass", "metal", "paper", "plastic", "trash"]
-
+number_to_class = ['cardboard',
+                   'glass',
+                   'metal',
+                   'paper',
+                   'plastic',
+                   'trash',]
 
 def predict(new_image_path):
     try:
-        test_image = image.load_img(new_image_path, target_size=(224, 224))
-        test_image = image.img_to_array(test_image) / 255
-        test_image = np.expand_dims(test_image, axis=0)
+        img = ku.load_img(new_image_path, target_size=(32,32))
+        img = ku.img_to_array(img, dtype=np.uint8)
+        img = np.array(img)/255.0
 
-        predicted_array = model.predict(test_image)
-        predicted_value = output_class[np.argmax(predicted_array)]
-        predicted_accuracy = round(np.max(predicted_array) * 100, 2)
+        prediction = model.predict(img[np.newaxis, ...])
+        print(prediction)
+        predicted_value = number_to_class[np.argmax(prediction[0], axis=-1)]
+        predicted_accuracy = float(np.max(prediction[0], axis=-1))
 
         return predicted_value, predicted_accuracy
     except Exception as e:
